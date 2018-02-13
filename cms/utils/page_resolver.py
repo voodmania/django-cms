@@ -122,6 +122,10 @@ def get_page_from_request(request, use_path=None):
     if draft and page and not user_can_change_page(request.user, page):
         page = get_page_from_path(path, preview, draft=False)
 
+    # force draft page on edit request
+    if 'edit' in request.GET and not page.publisher_is_draft:
+        page = page.publisher_draft
+
     # For public pages we check if any parent is hidden due to published dates
     # In this case the selected page is not reachable
     if page and not draft:
